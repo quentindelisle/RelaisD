@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Relais 6 s · N'EPS</title>
+<title>Relais cible · N'EPS</title>
 <meta name="theme-color" content="#9E3A26">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{
-  --tartan:#9E3A26; --tartan-vif:#C9573C; --ligne:#FFFFFF; --pelouse:#2E6B45;
+  --tartan:#9E3A26; --tartan-vif:#C9573C; --ligne:#FFFFFF; --pelouse:#2E6B45; --pelouse-vif:#1F8A4C;
   --encre:#1B2230; --fond:#ECEEE9; --carte:#FFFFFF; --doux:#5B6472; --trait:#D3D8CF; --alerte:#B3261E;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -18,342 +18,436 @@
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --tartan:#B84A31; --tartan-vif:#E0704F; --pelouse:#57A474;
+    --tartan:#B84A31; --tartan-vif:#E0704F; --pelouse:#57A474; --pelouse-vif:#3FBF72;
     --encre:#EDF0F3; --fond:#141920; --carte:#1E252F; --doux:#A2ABB8; --trait:#313A47; --alerte:#F2877E;
   }
 }
 :root[data-theme="dark"]{
-  --tartan:#B84A31; --tartan-vif:#E0704F; --pelouse:#57A474;
+  --tartan:#B84A31; --tartan-vif:#E0704F; --pelouse:#57A474; --pelouse-vif:#3FBF72;
   --encre:#EDF0F3; --fond:#141920; --carte:#1E252F; --doux:#A2ABB8; --trait:#313A47; --alerte:#F2877E;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
 body{margin:0;min-height:100%;background:var(--fond);color:var(--encre);
-  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  font-size:17px;line-height:1.45}
-button,input,select{font:inherit;color:inherit}
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
 .num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--tartan-vif);outline-offset:2px}
 
 /* En-tête : une piste */
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--tartan);color:#fff}
-.titre{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 16px 6px;max-width:960px;margin:0 auto}
-.titre h1{margin:0;font-size:1.35rem;font-weight:800;letter-spacing:-.01em}
-.titre small{opacity:.85;font-size:.8rem}
-nav{display:flex;max-width:960px;margin:0 auto;border-top:2px solid rgba(255,255,255,.9)}
-nav button{flex:1;border:0;background:none;color:#fff;padding:12px 4px;font-weight:600;opacity:.75;
-  border-right:2px solid rgba(255,255,255,.9);cursor:pointer}
+.bandeau{max-width:1040px;margin:0 auto}
+.titre{display:flex;align-items:center;gap:12px;padding:10px 16px 8px}
+.titre h1{margin:0;font-size:1.3rem;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.classes{display:flex;gap:6px;overflow-x:auto;flex:1;padding:2px;scrollbar-width:none}
+.classes::-webkit-scrollbar{display:none}
+.cl{flex:none;border:2px solid rgba(255,255,255,.75);background:none;color:#fff;border-radius:999px;padding:5px 14px;min-height:38px;font-weight:700;cursor:pointer}
+.cl[aria-pressed="true"]{background:#fff;color:var(--tartan);border-color:#fff}
+.cl.plus{border-style:dashed;opacity:.85}
+nav{display:flex;border-top:2px solid rgba(255,255,255,.9)}
+nav button{flex:1;border:0;background:none;color:#fff;padding:11px 4px;font-weight:600;opacity:.75;border-right:2px solid rgba(255,255,255,.9);cursor:pointer}
 nav button:last-child{border-right:0}
 nav button[aria-selected="true"]{opacity:1;background:rgba(0,0,0,.18);box-shadow:inset 0 -4px 0 #fff}
 
-main{max-width:960px;margin:0 auto;padding:16px}
+main{max-width:1040px;margin:0 auto;padding:16px 16px 72px}
 section{display:none}
 section.actif{display:block}
-h2{font-size:1.15rem;margin:8px 0 12px}
-p.aide{color:var(--doux);margin:0 0 14px;font-size:.95rem;max-width:62ch}
-
+h2{font-size:1.1rem;margin:0 0 10px}
+p.aide{color:var(--doux);margin:0 0 12px;font-size:.93rem;max-width:64ch}
 .bloc{background:var(--carte);border:1px solid var(--trait);border-radius:10px;padding:14px;margin-bottom:14px}
 .ligne-form{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-input[type=text],input[type=number],input[type=search],select,textarea{
-  background:var(--fond);border:1px solid var(--trait);border-radius:8px;padding:10px 12px;min-height:44px}
-textarea{width:100%;min-height:120px;font:inherit;color:inherit;resize:vertical}
-.btn{border:0;border-radius:8px;padding:10px 16px;min-height:44px;font-weight:700;cursor:pointer;
-  background:var(--tartan);color:#fff}
+input[type=text],input[type=number],textarea{background:var(--fond);border:1px solid var(--trait);border-radius:8px;padding:9px 12px;min-height:44px}
+textarea{width:100%;min-height:110px;resize:vertical}
+.btn{border:0;border-radius:8px;padding:10px 16px;min-height:44px;font-weight:700;cursor:pointer;background:var(--tartan);color:#fff}
 .btn.second{background:transparent;color:var(--encre);border:1px solid var(--trait)}
 .btn.vert{background:var(--pelouse)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
-:focus-visible{outline:3px solid var(--tartan-vif);outline-offset:2px}
-details summary{cursor:pointer;font-weight:600;padding:4px 0}
+details summary{cursor:pointer;font-weight:700;padding:4px 0}
+.vide{color:var(--doux);text-align:center;padding:28px 12px}
 
-/* Tableau élèves */
-.tab-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse}
-th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--trait)}
-th{font-size:.85rem;color:var(--doux);font-weight:600}
-td input.t{width:84px;min-height:40px;padding:6px 8px}
-td.d{font-weight:700}
+/* Réglages */
+.reglages{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.reglages label{display:flex;align-items:center;gap:8px;font-weight:600}
+.reglages input{width:86px;text-align:center;font-weight:700}
+.total{font-weight:800;color:var(--tartan)}
+
+/* Mesure individuelle */
+.mesure{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
+.mesure .chrono{font-size:clamp(2.6rem,9vw,3.8rem);font-weight:800;letter-spacing:-.03em;line-height:1;min-width:4.2ch}
+.mode[aria-pressed="true"]{background:var(--encre);color:var(--fond);border-color:var(--encre)}
+.tuiles-eleves{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.te{position:relative;text-align:left;border:1px solid var(--trait);border-left:6px solid var(--trait);background:var(--carte);border-radius:10px;padding:10px 12px;min-height:78px;cursor:pointer}
+.te.fait{border-left-color:var(--tartan)}
+.te.absent{opacity:.4;border-style:dashed}
+.te .n{display:block;font-weight:700;line-height:1.2}
+.te .p{display:block;margin-top:4px;color:var(--doux);font-size:.9rem}
+.te .p b{color:var(--encre);font-size:1.05rem}
+.en-course .te:not(.absent){border-color:var(--pelouse);border-left-color:var(--pelouse)}
+.te.flash{background:var(--pelouse);color:#fff}
+.te.flash .p,.te.flash .p b{color:#fff}
+.gestion li{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--trait);padding:2px 0}
+.gestion ul{list-style:none;margin:8px 0 0;padding:0;columns:2 240px;column-gap:24px}
 .x{border:0;background:none;color:var(--doux);font-size:1.3rem;min-width:40px;min-height:40px;cursor:pointer}
-.absent td{opacity:.45}
-input[type=checkbox]{width:22px;height:22px;accent-color:var(--pelouse)}
 
-/* Trios : chaque trio est un couloir */
-.reglage{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
-.reglage input[type=range]{flex:1;min-width:160px;accent-color:var(--tartan)}
-.equilibre{font-size:.95rem;color:var(--doux)}
-.couloirs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.couloir{background:var(--carte);border:1px solid var(--trait);border-left:10px solid var(--tartan);border-radius:10px;padding:12px 14px}
-.couloir .tete{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.couloir .tete b{font-size:1.05rem}
-.cible{text-align:right}
-.cible strong{font-size:1.6rem;line-height:1;color:var(--tartan)}
-.cible span{display:block;font-size:.8rem;color:var(--doux)}
-.membre{display:flex;justify-content:space-between;align-items:center;width:100%;gap:8px;border:1px solid transparent;
-  background:var(--fond);border-radius:8px;padding:8px 10px;margin-top:6px;min-height:44px;cursor:pointer;text-align:left}
-.membre .ordre{color:var(--doux);font-size:.85rem;min-width:1.4em}
+/* Trios en tuiles */
+.tuiles-trios{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.tt{background:var(--carte);border:1px solid var(--trait);border-top:6px solid var(--tartan);border-radius:10px;padding:10px 12px 12px;user-select:none;-webkit-user-select:none}
+.tt.drag{opacity:.85;box-shadow:0 10px 28px rgba(0,0,0,.25);transform:scale(1.02);border-top-color:var(--tartan-vif)}
+.tt-tete{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.poignee{touch-action:none;cursor:grab;border:0;background:var(--fond);border-radius:8px;min-width:44px;min-height:44px;font-size:1.3rem;line-height:1;color:var(--doux)}
+.tt-tete b{font-size:1.1rem}
+.passage{margin-left:auto;font-size:.85rem;color:var(--doux)}
+.membre{display:flex;align-items:center;width:100%;gap:8px;border:1px solid transparent;background:var(--fond);border-radius:8px;padding:7px 10px;margin-top:6px;min-height:44px;cursor:pointer;text-align:left}
+.membre .o{color:var(--doux);font-size:.85rem;min-width:1.2em}
 .membre .nom{flex:1}
 .membre.sel{border-color:var(--tartan-vif);box-shadow:0 0 0 2px var(--tartan-vif)}
+.tt-pied{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:8px}
+.cible strong{display:block;white-space:nowrap;font-size:1.55rem;line-height:1;color:var(--tartan)}
+.cible span{font-size:.8rem;color:var(--doux)}
+.niv{display:flex;align-items:center;border:1px solid var(--trait);border-radius:8px;overflow:hidden}
+.niv button{border:0;background:var(--fond);min-width:40px;min-height:40px;font-size:1.2rem;font-weight:700;cursor:pointer}
+.niv span{min-width:3.6em;text-align:center;font-weight:800}
 
-.niveaux{display:flex;border:1px solid var(--trait);border-radius:8px;overflow:hidden;margin-top:10px}
-.niveaux button{flex:1;border:0;border-right:1px solid var(--trait);background:var(--fond);padding:8px 4px;min-height:42px;font-weight:700;cursor:pointer}
-.niveaux button:last-child{border-right:0}
-.niveaux button[aria-pressed="true"]{background:var(--tartan);color:#fff}
-.niveaux button:disabled{opacity:.5;cursor:not-allowed}
-.valide{font-size:.85rem;font-weight:700;color:var(--pelouse)}
-.valide.non{color:var(--doux);font-weight:600}
-
-/* Chrono */
-.choix-trio{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.chip{border:1px solid var(--trait);background:var(--carte);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer;font-weight:600}
+/* Relais */
+.file{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px}
+.chip{flex:none;border:1px solid var(--trait);background:var(--carte);border-radius:999px;padding:7px 14px;min-height:44px;cursor:pointer;font-weight:600}
+.chip small{color:var(--doux);font-weight:600;margin-left:4px}
 .chip[aria-pressed="true"]{background:var(--tartan);border-color:var(--tartan);color:#fff}
-.stade{background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:18px 16px 16px}
-.temps{font-size:clamp(4.5rem,22vw,9rem);font-weight:800;line-height:.95;letter-spacing:-.04em;text-align:center;margin:4px 0 2px}
+.chip[aria-pressed="true"] small{color:#fff}
+.stade{background:var(--carte);border:1px solid var(--trait);border-radius:12px;padding:16px}
+.info-cible{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.info-cible b{font-size:1.2rem}
+.info-cible strong{font-size:1.8rem;color:var(--tartan)}
+.temps{font-size:clamp(4.5rem,22vw,9rem);font-weight:800;line-height:.95;letter-spacing:-.04em;text-align:center;margin:10px 0 2px}
 .statut{text-align:center;font-size:1.25rem;font-weight:700;min-height:1.8em}
-.piste{position:relative;display:flex;height:64px;margin:16px 0 6px;background:var(--tartan);border-radius:6px;overflow:hidden;
-  border-top:3px solid var(--ligne);border-bottom:3px solid var(--ligne)}
+.piste{display:flex;height:60px;margin:14px 0 6px;background:var(--tartan);border-radius:6px;overflow:hidden;border-top:3px solid var(--ligne);border-bottom:3px solid var(--ligne)}
 .piste .seg{flex:1;position:relative;border-right:3px solid var(--ligne)}
 .piste .seg:last-child{border-right:0}
 .piste .rempli{position:absolute;inset:0 auto 0 0;width:0;background:var(--tartan-vif)}
-.piste .seg span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;
-  padding:0 6px;text-align:center;font-size:.95rem;line-height:1.1}
+.piste .seg span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;padding:0 6px;text-align:center;font-size:.95rem;line-height:1.1}
 .reperes{display:flex;justify-content:space-between;color:var(--doux);font-size:.85rem}
 .actions{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
 .actions .btn{min-width:140px;font-size:1.1rem;padding:14px 20px}
-.saisie{margin-top:16px;border-top:1px solid var(--trait);padding-top:14px}
-.verdict{font-size:1.2rem;font-weight:700;margin-top:10px}
+.resultats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.resultats button{border:0;border-radius:10px;min-height:72px;font-size:1.05rem;font-weight:800;color:#fff;cursor:pointer;padding:8px}
+.r-non{background:var(--alerte)}
+.r-att{background:var(--pelouse)}
+.r-dep{background:var(--pelouse-vif)}
+.verdict{text-align:center;font-size:1.15rem;font-weight:700;margin-top:14px}
 .verdict.ok{color:var(--pelouse)}
 .verdict.ko{color:var(--alerte)}
 
-/* Records */
-.podium{display:grid;gap:8px}
-.rec{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;background:var(--carte);
-  border:1px solid var(--trait);border-radius:10px;padding:12px 14px}
-.rec .rang{font-size:1.6rem;font-weight:800;color:var(--doux);min-width:1.6em;text-align:center}
-.rec.premier{border:2px solid var(--pelouse)}
-.rec.premier .rang{color:var(--pelouse)}
-.rec .pct{font-size:1.5rem;font-weight:800;text-align:right}
-.rec .detail{color:var(--doux);font-size:.9rem}
-.barre{grid-column:2 / 4;height:8px;background:var(--fond);border-radius:4px;overflow:hidden;position:relative}
-.barre i{position:absolute;inset:0 auto 0 0;background:var(--tartan)}
-.barre b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--encre)}
+/* Bilan */
+.bilan{display:grid;gap:8px}
+.ligne-bilan{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;background:var(--carte);border:1px solid var(--trait);border-radius:10px;padding:12px 14px}
+.ligne-bilan .noms{color:var(--doux);font-size:.9rem}
+.ligne-bilan .nv{font-size:1.6rem;font-weight:800;color:var(--tartan);text-align:right}
+.histo{grid-column:1 / 3;display:flex;flex-wrap:wrap;gap:4px}
+.histo span{font-size:.78rem;font-weight:700;border-radius:6px;padding:2px 7px;color:#fff}
 
-.vide{color:var(--doux);text-align:center;padding:28px 12px}
-footer{max-width:960px;margin:8px auto 24px;padding:0 16px;color:var(--doux);font-size:.8rem}
-#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-  background:var(--encre);color:var(--fond);padding:10px 16px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;
-  transition:opacity .2s}
+.signature{position:fixed;right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));
+  font-size:.8rem;color:var(--doux);background:var(--fond);padding:3px 8px;border-radius:6px;z-index:4}
+.signature b{color:var(--tartan)}
+#toast{position:fixed;left:50%;bottom:calc(52px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--encre);color:var(--fond);
+  padding:10px 16px;border-radius:8px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:6;max-width:90vw;text-align:center}
 #toast.on{opacity:1}
-@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+@media (prefers-reduced-motion:reduce){#toast,.tt{transition:none}}
 </style>
 </head>
 <body>
 <header>
-  <div class="titre"><h1>Relais 6 secondes</h1><small>N'EPS</small></div>
-  <nav role="tablist">
-    <button role="tab" data-tab="eleves" aria-selected="true">Élèves</button>
-    <button role="tab" data-tab="trios" aria-selected="false">Trios</button>
-    <button role="tab" data-tab="chrono" aria-selected="false">Chrono</button>
-    <button role="tab" data-tab="records" aria-selected="false">Records</button>
-  </nav>
+  <div class="bandeau">
+    <div class="titre"><h1>Relais cible</h1><div class="classes" id="classes"></div></div>
+    <nav role="tablist">
+      <button role="tab" data-tab="eleves" aria-selected="true">Élèves</button>
+      <button role="tab" data-tab="trios" aria-selected="false">Trios</button>
+      <button role="tab" data-tab="relais" aria-selected="false">Relais</button>
+      <button role="tab" data-tab="bilan" aria-selected="false">Bilan</button>
+    </nav>
+  </div>
 </header>
 
 <main>
   <!-- ÉLÈVES -->
   <section id="eleves" class="actif">
-    <div class="bloc ligne-form">
-      <label for="classe" class="num">Classe</label>
-      <select id="classe"></select>
-      <button class="btn second" id="nouvClasse">Nouvelle classe</button>
-      <button class="btn second" id="suppClasse">Supprimer</button>
+    <div class="bloc reglages">
+      <label>Distance chronométrée <input type="number" id="rDist" min="10" max="100" step="5" inputmode="numeric"> m</label>
+      <label>Durée par relayeur <input type="number" id="rDuree" min="2" max="15" step="1" inputmode="numeric"> s</label>
+      <span>Relais à 3 : <span class="total num" id="rTotal"></span></span>
     </div>
 
     <div class="bloc">
-      <h2 style="margin-top:0">Ajouter un élève</h2>
-      <div class="ligne-form">
-        <input type="text" id="nom" placeholder="Nom" autocomplete="off" style="flex:2;min-width:150px">
-        <input type="text" id="t50" placeholder="Temps 50 m (ex. 7,85)" inputmode="decimal" style="flex:1;min-width:130px">
-        <button class="btn" id="ajouter">Ajouter</button>
+      <div class="mesure">
+        <span class="chrono num" id="affMes">0,00</span>
+        <button class="btn vert" id="mesGo">Départ</button>
+        <button class="btn second mode" id="modeAbs" aria-pressed="false">Marquer les absents</button>
+        <span class="aide" id="infoEleves" style="margin:0"></span>
       </div>
-      <div class="ligne-form" style="margin-top:12px">
+      <p class="aide" id="aideMes" style="margin:10px 0 0">Chrono lancé : touche la tuile d'un élève à son arrivée (le meilleur temps est gardé). Chrono arrêté : touche une tuile pour saisir ou corriger son temps.</p>
+    </div>
+
+    <div class="tuiles-eleves" id="tuilesEleves"></div>
+
+    <details class="bloc gestion" style="margin-top:14px">
+      <summary>Gérer la classe</summary>
+      <div class="ligne-form" style="margin-top:10px">
         <label class="btn second" for="fichierXlsx" style="display:inline-flex;align-items:center">Importer une classe (.xlsx)</label>
         <input type="file" id="fichierXlsx" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+        <button class="btn second" id="renClasse">Renommer la classe</button>
+        <button class="btn second" id="suppClasse">Supprimer la classe</button>
       </div>
-      <p class="aide" style="margin:6px 0 0">Colonne A : NOM Prénom. Si la colonne B contient déjà un temps, il est repris.</p>
-      <details style="margin-top:12px">
+      <p class="aide" style="margin:6px 0 12px">Import : colonne A = NOM Prénom, colonne B = temps (facultatif).</p>
+      <div class="ligne-form">
+        <input type="text" id="nom" placeholder="NOM Prénom" autocomplete="off" style="flex:1;min-width:180px">
+        <button class="btn" id="ajouter">Ajouter l'élève</button>
+      </div>
+      <details style="margin-top:10px">
         <summary>Coller une liste</summary>
-        <p class="aide">Une ligne par élève : le nom puis le temps. Exemple : <code>Martin Léa ; 8,4</code></p>
-        <textarea id="liste" placeholder="Martin Léa ; 8,4&#10;Durand Tom ; 7,1"></textarea>
+        <textarea id="liste" placeholder="MARTIN Léa&#10;DURAND Tom ; 7,1"></textarea>
         <button class="btn" id="importer" style="margin-top:8px">Ajouter la liste</button>
       </details>
-    </div>
-
-    <div class="bloc">
-      <h2 style="margin-top:0" id="titreListe">Élèves</h2>
-      <p class="aide">Distance sur 6 s = 6 × 50 ÷ temps. Touche Entrée pour passer à l'élève suivant. Décoche un absent pour l'exclure des trios.</p>
-      <div class="tab-wrap"><table>
-        <thead><tr><th>Prés.</th><th>Nom</th><th>50 m (s)</th><th>6 s (m)</th><th></th></tr></thead>
-        <tbody id="corpsEleves"></tbody>
-      </table></div>
-    </div>
+      <ul id="listeNoms"></ul>
+    </details>
   </section>
 
   <!-- TRIOS -->
   <section id="trios">
-    <div class="bloc">
-      <div class="reglage">
-        <button class="btn" id="constituer">Constituer les trios</button>
-        <span class="equilibre" id="infoPresents"></span>
-      </div>
-      <p class="aide" style="margin:12px 0 0">Tous les trios commencent à 100 % : la cible est la somme des distances sur 6 s. Un trio qui réussit passe à 105 %, puis 110 %.</p>
+    <div class="bloc ligne-form">
+      <button class="btn" id="constituer">Constituer les trios</button>
+      <span class="aide" id="infoTrios" style="margin:0"></span>
     </div>
-    <p class="aide" id="aideSwap">Touche un élève puis un autre pour les échanger. L'ordre dans le trio est l'ordre de passage.</p>
-    <p class="equilibre" id="equilibre" style="margin:0 0 12px"></p>
-    <div class="couloirs" id="listeTrios"></div>
+    <p class="aide" id="aideTrios">Fais glisser une tuile par sa poignée ⠿ pour choisir l'ordre de passage. Touche deux élèves pour les échanger : l'ordre dans le trio est l'ordre des relayeurs.</p>
+    <div class="tuiles-trios" id="tuilesTrios"></div>
   </section>
 
-  <!-- CHRONO -->
-  <section id="chrono">
-    <div class="choix-trio" id="choixTrio"></div>
+  <!-- RELAIS -->
+  <section id="relais">
+    <div class="file" id="file"></div>
     <div class="stade">
+      <div class="info-cible" id="infoCible"></div>
       <div class="temps num" id="affTemps">0,0</div>
-      <div class="statut" id="affStatut">Choisis un trio</div>
-      <div class="niveaux" id="nivChrono" role="group" aria-label="Intensité" style="max-width:360px;margin:10px auto 0" hidden></div>
+      <div class="statut" id="affStatut">Constitue d'abord les trios</div>
       <div class="piste" id="piste"></div>
       <div class="reperes num" id="reperes"></div>
       <div class="actions">
         <button class="btn vert" id="partez" disabled>Départ</button>
         <button class="btn second" id="stop" disabled>Arrêter</button>
       </div>
-      <div class="saisie" id="saisie" hidden>
-        <div class="ligne-form">
-          <label for="distReal">Distance atteinte (m)</label>
-          <input type="number" id="distReal" step="0.5" min="0" inputmode="decimal" style="width:120px">
-          <button class="btn" id="enregistrer">Enregistrer l'essai</button>
-        </div>
-        <div class="verdict" id="verdict"></div>
-        <div id="suite" style="margin-top:10px"></div>
+      <div class="resultats" id="resultats" hidden>
+        <button class="r-non" data-r="non">Cible non atteinte</button>
+        <button class="r-att" data-r="atteinte">Cible atteinte</button>
+        <button class="r-dep" data-r="depassee">Cible dépassée</button>
       </div>
+      <div class="verdict" id="verdict"></div>
     </div>
-    <p class="aide" style="margin-top:12px">Trois bips avant le départ, un bip à chaque passage de témoin, un bip long à la fin.</p>
+    <p class="aide" style="margin-top:12px">Place un plot à la distance cible. Trois bips avant le départ, un bip à chaque passage de témoin, un bip long à la fin. Cible atteinte ou dépassée : le trio monte d'un niveau (100 → 105 → 110 → 115 → 120 %).</p>
   </section>
 
-  <!-- RECORDS -->
-  <section id="records">
-    <p class="aide">Classement au pourcentage de la distance théorique (somme des distances sur 6 s). Le niveau réussi est l'intensité la plus haute où la cible a été atteinte.</p>
-    <div class="podium" id="listeRecords"></div>
-    <div style="margin-top:16px"><button class="btn second" id="effacerEssais">Effacer les essais de la classe</button></div>
+  <!-- BILAN -->
+  <section id="bilan">
+    <p class="aide">Niveau actuel de chaque trio et historique de ses passages.</p>
+    <div class="bilan" id="listeBilan"></div>
+    <div style="margin-top:16px"><button class="btn second" id="effacerEssais">Effacer l'historique de la classe</button></div>
   </section>
 </main>
-<footer>Relais 6 secondes · N'EPS by Quentin Delisle · données enregistrées sur cet appareil</footer>
+
+<div class="signature">N'EPS · <b>by Quentin Delisle</b></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function(){
 "use strict";
-const KEY = "neps-relais6s-v1";
-const $ = s => document.querySelector(s);
-const fr = (n,d=1) => n.toFixed(d).replace(".",",");
-const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const uid = () => Math.random().toString(36).slice(2,10);
+const KEY="neps-relais6s-v1";
+const NIVEAUX=[100,105,110,115,120];
+const $=s=>document.querySelector(s);
+const fr=(n,d=1)=>n.toFixed(d).replace(".",",");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Math.random().toString(36).slice(2,10);
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("on"),2400);}
 
 /* ---------- Données ---------- */
-function nouvelleClasse(){ return {eleves:[],trios:[],essais:[]}; }
+function nouvelleClasse(){return {eleves:[],trios:[],essais:[],reglages:{dist:50,duree:6}};}
 function charger(){
-  try{ const v = JSON.parse(localStorage.getItem(KEY)); if(v && v.classes && Object.keys(v.classes).length) return v; }catch(e){}
-  return {classes:{"Ma classe":nouvelleClasse()}, cur:"Ma classe", coef:105};
+  let v=null; try{v=JSON.parse(localStorage.getItem(KEY));}catch(e){}
+  if(!v||!v.classes||!Object.keys(v.classes).length) v={classes:{"Ma classe":nouvelleClasse()},cur:"Ma classe"};
+  Object.values(v.classes).forEach(c=>{            // reprise des anciennes versions
+    c.reglages=c.reglages||{dist:50,duree:6};
+    c.eleves=(c.eleves||[]).map(e=>("temps" in e)?e:{id:e.id,nom:e.nom,temps:e.t50??null,present:e.present!==false});
+    c.trios=(c.trios||[]).map(t=>({id:t.id,num:t.num,membres:t.membres,niveau:t.niveau||100}));
+    c.essais=(c.essais||[]).map(e=>e.resultat?e:{trioId:e.trioId,num:e.num,niveau:e.niveau||100,cible:e.cible,
+      resultat:e.dist>e.cible?"depassee":e.dist>=e.cible?"atteinte":"non",date:e.date});
+  });
+  if(!v.classes[v.cur]) v.cur=Object.keys(v.classes)[0];
+  return v;
 }
-let S = charger();
-if(!S.classes[S.cur]) S.cur = Object.keys(S.classes)[0];
-function sauver(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("Enregistrement impossible sur cet appareil"); } }
-const C = () => S.classes[S.cur];
+let S=charger();
+function sauver(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){toast("Enregistrement impossible sur cet appareil");}}
+const C=()=>S.classes[S.cur];
+const R=()=>C().reglages;
+const parseT=s=>{const v=parseFloat(String(s??"").replace(",","."));return (v>=2&&v<=40)?v:null;};
+const eleve=id=>C().eleves.find(e=>e.id===id);
+const distRelais=e=>{const t=e&&parseT(e.temps);return t?R().duree*R().dist/t:0;};
+const distId=id=>distRelais(eleve(id));
+const somme=ids=>ids.reduce((a,id)=>a+distId(id),0);
+const arrondi=x=>Math.round(x*2)/2;
+const niveau=t=>t.niveau||100;
+const cibleTrio=t=>arrondi(somme(t.membres)*niveau(t)/100);
+const dureeTrio=t=>R().duree*t.membres.length;
+const nomEl=id=>(eleve(id)||{}).nom||"?";
 
-function parseT(s){ const v = parseFloat(String(s).replace(",",".")); return (v>=4 && v<=20) ? v : null; }
-const d6 = t => 6*50/t;
-const eleve = id => C().eleves.find(e=>e.id===id);
-const distEleve = id => { const e = eleve(id); return e && parseT(e.t50) ? d6(parseT(e.t50)) : 0; };
-const somme = ids => ids.reduce((a,id)=>a+distEleve(id),0);
-const arrondi = x => Math.round(x*2)/2;
-const NIVEAUX = [100,105,110];
-const niveau = tr => tr.niveau || 100;
-const baseTrio = tr => arrondi(somme(tr.membres));
-const cibleTrio = tr => arrondi(somme(tr.membres)*niveau(tr)/100);
-const dureeTrio = tr => 6*tr.membres.length;
-
-function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("on"),2200); }
-
-/* ---------- Onglets ---------- */
-document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>afficherOnglet(b.dataset.tab)));
-function afficherOnglet(id){
-  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===id));
-  document.querySelectorAll("main section").forEach(s=>s.classList.toggle("actif", s.id===id));
-  rendre();
-  window.scrollTo(0,0);
-}
-
-/* ---------- Classes ---------- */
+/* ---------- Onglets & classes ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.setAttribute("aria-selected",x===b));
+  document.querySelectorAll("main section").forEach(s=>s.classList.toggle("actif",s.id===b.dataset.tab));
+  rendre(); window.scrollTo(0,0);
+}));
 function rendreClasses(){
-  $("#classe").innerHTML = Object.keys(S.classes).map(n=>`<option ${n===S.cur?"selected":""}>${esc(n)}</option>`).join("");
+  $("#classes").innerHTML=Object.keys(S.classes).map(n=>`<button class="cl" data-c="${esc(n)}" aria-pressed="${n===S.cur}">${esc(n)}</button>`).join("")
+    +`<button class="cl plus" data-plus="1">+ Classe</button>`;
 }
-$("#classe").addEventListener("change",e=>{ S.cur=e.target.value; selTrio=null; sauver(); rendre(); });
-$("#nouvClasse").addEventListener("click",()=>{
-  const n = (prompt("Nom de la classe (ex. 2nde 4)")||"").trim();
-  if(!n) return;
-  if(S.classes[n]) { toast("Cette classe existe déjà"); return; }
-  S.classes[n]=nouvelleClasse(); S.cur=n; sauver(); rendre();
+function creerClasse(defaut){
+  const n=(prompt("Nom de la classe (ex. 2nde 4)",defaut||"")||"").trim();
+  if(!n) return null;
+  if(!S.classes[n]) S.classes[n]=nouvelleClasse();
+  return n;
+}
+$("#classes").addEventListener("click",e=>{
+  const b=e.target.closest(".cl"); if(!b) return;
+  if(etat!=="attente"||mes.run){toast("Arrête le chrono avant de changer de classe");return;}
+  if(b.dataset.plus){const n=creerClasse(); if(!n) return; S.cur=n;}
+  else S.cur=b.dataset.c;
+  selTrio=null; swapSel=null; sauver(); rendre();
+});
+$("#renClasse").addEventListener("click",()=>{
+  const n=(prompt("Nouveau nom de la classe",S.cur)||"").trim();
+  if(!n||n===S.cur) return;
+  if(S.classes[n]){toast("Ce nom existe déjà");return;}
+  const o={}; Object.keys(S.classes).forEach(k=>o[k===S.cur?n:k]=S.classes[k]); S.classes=o; S.cur=n; sauver(); rendre();
 });
 $("#suppClasse").addEventListener("click",()=>{
-  if(Object.keys(S.classes).length<2){ toast("Garde au moins une classe"); return; }
+  if(Object.keys(S.classes).length<2){toast("Garde au moins une classe");return;}
   if(!confirm(`Supprimer la classe « ${S.cur} » et toutes ses données ?`)) return;
-  delete S.classes[S.cur]; S.cur=Object.keys(S.classes)[0]; sauver(); rendre();
+  delete S.classes[S.cur]; S.cur=Object.keys(S.classes)[0]; selTrio=null; sauver(); rendre();
 });
 
-/* ---------- Élèves ---------- */
-function ajouterEleve(nom,t){
-  C().eleves.push({id:uid(), nom:nom.trim(), t50:t, present:true});
+/* ---------- Réglages ---------- */
+function rendreReglages(){
+  $("#rDist").value=R().dist; $("#rDuree").value=R().duree;
+  $("#rTotal").textContent=`3 × ${R().duree} s = ${3*R().duree} s`;
 }
-$("#ajouter").addEventListener("click",()=>{
-  const nom=$("#nom").value.trim(), t=parseT($("#t50").value);
-  if(!nom){ toast("Indique un nom"); $("#nom").focus(); return; }
-  if(!t){ toast("Temps entre 4 et 20 s, ex. 7,85"); $("#t50").focus(); return; }
-  ajouterEleve(nom,t); $("#nom").value=""; $("#t50").value=""; $("#nom").focus();
+$("#rDist").addEventListener("change",e=>{const v=+e.target.value; if(v>=10&&v<=100){R().dist=v;sauver();} rendre();});
+$("#rDuree").addEventListener("change",e=>{const v=+e.target.value; if(v>=2&&v<=15){R().duree=v;sauver();} rendre();});
+
+/* ---------- Audio ---------- */
+let audio=null, noeuds=[];
+async function audioPret(){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();await audio.resume();}catch(e){audio=null;}}
+function bip(t,f,d){
+  if(!audio) return;
+  const o=audio.createOscillator(),g=audio.createGain();
+  o.type="square";o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.35,t+0.01);
+  g.gain.setValueAtTime(0.35,t+d-0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  o.connect(g).connect(audio.destination);o.start(t);o.stop(t+d+0.02);noeuds.push(o);
+}
+
+/* ---------- Élèves : mesure ---------- */
+const mes={run:false,t0:0,raf:0};
+let modeAbs=false, flashId=null;
+function rendreEleves(){
+  const el=C().eleves.slice().sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"}));
+  const faits=el.filter(e=>parseT(e.temps)).length, pres=el.filter(e=>e.present!==false).length;
+  $("#infoEleves").textContent=el.length?`${faits}/${el.length} chronométrés, ${pres} présents`:"";
+  $("#tuilesEleves").classList.toggle("en-course",mes.run);
+  $("#tuilesEleves").innerHTML=el.length?el.map(e=>{
+    const t=parseT(e.temps);
+    return `<button class="te ${t?"fait":""} ${e.present===false?"absent":""} ${e.id===flashId?"flash":""}" data-id="${e.id}">
+      <span class="n">${esc(e.nom)}</span>
+      <span class="p num">${e.present===false?"absent":t?`<b>${fr(t,2)} s</b> → ${fr(distRelais(e))} m`:`${R().dist} m : —`}</span></button>`;
+  }).join(""):`<div class="vide" style="grid-column:1/-1">Importe ta classe ou ajoute des élèves dans « Gérer la classe ».</div>`;
+  $("#listeNoms").innerHTML=el.map(e=>`<li><span>${esc(e.nom)}</span><button class="x" data-supp="${e.id}" aria-label="Supprimer ${esc(e.nom)}">×</button></li>`).join("");
+  $("#modeAbs").setAttribute("aria-pressed",modeAbs);
+  $("#mesGo").textContent=mes.run?"Arrêter":"Départ";
+  $("#mesGo").className="btn "+(mes.run?"":"vert");
+}
+$("#mesGo").addEventListener("click",async()=>{
+  if(mes.run){mes.run=false;cancelAnimationFrame(mes.raf);rendreEleves();return;}
+  await audioPret(); bip(audio?audio.currentTime:0,1100,.25);
+  mes.run=true; mes.t0=performance.now(); modeAbs=false;
+  const boucle=()=>{ if(!mes.run) return; $("#affMes").textContent=fr((performance.now()-mes.t0)/1000,2); mes.raf=requestAnimationFrame(boucle); };
+  boucle(); rendreEleves();
+});
+$("#modeAbs").addEventListener("click",()=>{ if(mes.run) return; modeAbs=!modeAbs; rendreEleves(); });
+$("#tuilesEleves").addEventListener("click",e=>{
+  const b=e.target.closest(".te"); if(!b) return;
+  const el=eleve(b.dataset.id); if(!el) return;
+  if(mes.run){
+    if(el.present===false) return;
+    const t=Math.round((performance.now()-mes.t0)/10)/100, avant=parseT(el.temps);
+    if(!avant||t<avant){ el.temps=t; toast(`${el.nom} : ${fr(t,2)} s`); }
+    else toast(`${el.nom} : ${fr(t,2)} s, meilleur temps gardé (${fr(avant,2)} s)`);
+    flashId=el.id; setTimeout(()=>{flashId=null;rendreEleves();},700);
+  } else if(modeAbs){
+    el.present=el.present===false;
+  } else {
+    const v=prompt(`Temps de ${el.nom} sur ${R().dist} m (en s). Laisser vide pour effacer.`,parseT(el.temps)?fr(parseT(el.temps),2):"");
+    if(v===null) return;
+    if(!v.trim()) el.temps=null;
+    else { const t=parseT(v); if(!t){toast("Temps non valide");return;} el.temps=t; }
+  }
   sauver(); rendreEleves();
 });
-$("#t50").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#ajouter").click(); });
-$("#nom").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#t50").focus(); });
+
+/* ---------- Élèves : gestion ---------- */
+function ajouter(nom,temps){
+  nom=nom.replace(/\s+/g," ").trim(); if(!nom) return false;
+  if(C().eleves.some(x=>x.nom.toLowerCase()===nom.toLowerCase())) return false;
+  C().eleves.push({id:uid(),nom,temps:temps||null,present:true}); return true;
+}
+$("#ajouter").addEventListener("click",()=>{
+  if(!ajouter($("#nom").value)){toast("Nom vide ou déjà présent");return;}
+  $("#nom").value="";$("#nom").focus();sauver();rendreEleves();
+});
+$("#nom").addEventListener("keydown",e=>{if(e.key==="Enter")$("#ajouter").click();});
 $("#importer").addEventListener("click",()=>{
-  let ok=0, ko=0;
+  let n=0;
   $("#liste").value.split(/\r?\n/).forEach(l=>{
-    l=l.trim(); if(!l) return;
-    const m = l.match(/^(.*?)[\s;:\t,]+(\d+(?:[.,]\d+)?)\s*s?$/i);
-    const t = m && parseT(m[2]);
-    if(m && m[1].trim() && t){ ajouterEleve(m[1].replace(/[;,\t]+$/,""),t); ok++; } else ko++;
+    const m=l.trim().match(/^(.*?)(?:[\s;:\t,]+(\d+(?:[.,]\d+)?)\s*s?)?$/i);
+    if(m&&ajouter(m[1].replace(/[;,\t]+$/,""),parseT(m[2]))) n++;
   });
-  $("#liste").value=""; sauver(); rendreEleves();
-  toast(`${ok} élève(s) ajouté(s)` + (ko?`, ${ko} ligne(s) ignorée(s)`:""));
+  $("#liste").value="";sauver();rendreEleves();toast(`${n} élève(s) ajouté(s)`);
+});
+$("#listeNoms").addEventListener("click",e=>{
+  const id=e.target.dataset.supp; if(!id) return;
+  if(!confirm(`Supprimer ${nomEl(id)} ?`)) return;
+  C().eleves=C().eleves.filter(x=>x.id!==id);
+  C().trios.forEach(t=>t.membres=t.membres.filter(m=>m!==id));
+  C().trios=C().trios.filter(t=>t.membres.length);
+  sauver();rendre();
 });
 
 async function lireXlsx(buf){
-  const u8=new Uint8Array(buf), dv=new DataView(buf), dec=new TextDecoder();
+  const u8=new Uint8Array(buf),dv=new DataView(buf),dec=new TextDecoder();
   let fin=-1;
-  for(let i=u8.length-22;i>=Math.max(0,u8.length-65557);i--){ if(dv.getUint32(i,true)===0x06054b50){ fin=i; break; } }
+  for(let i=u8.length-22;i>=Math.max(0,u8.length-65557);i--){if(dv.getUint32(i,true)===0x06054b50){fin=i;break;}}
   if(fin<0) throw new Error("Ce fichier n'est pas un classeur .xlsx");
-  const nb=dv.getUint16(fin+10,true); let p=dv.getUint32(fin+16,true); const F={};
+  const nb=dv.getUint16(fin+10,true);let p=dv.getUint32(fin+16,true);const F={};
   for(let k=0;k<nb;k++){
-    const nl=dv.getUint16(p+28,true), xl=dv.getUint16(p+30,true), cl=dv.getUint16(p+32,true);
-    F[dec.decode(u8.subarray(p+46,p+46+nl))]={meth:dv.getUint16(p+10,true), taille:dv.getUint32(p+20,true), off:dv.getUint32(p+42,true)};
+    const nl=dv.getUint16(p+28,true),xl=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true);
+    F[dec.decode(u8.subarray(p+46,p+46+nl))]={meth:dv.getUint16(p+10,true),taille:dv.getUint32(p+20,true),off:dv.getUint32(p+42,true)};
     p+=46+nl+xl+cl;
   }
   async function lire(nom){
-    const f=F[nom]; if(!f) return null;
+    const f=F[nom];if(!f) return null;
     const deb=f.off+30+dv.getUint16(f.off+26,true)+dv.getUint16(f.off+28,true);
     const data=u8.slice(deb,deb+f.taille);
     if(f.meth===0) return dec.decode(data);
     if(typeof DecompressionStream==="undefined") throw new Error("Navigateur trop ancien pour lire le .xlsx");
-    const out=await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
-    return dec.decode(out);
+    return dec.decode(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer());
   }
   const xml=t=>new DOMParser().parseFromString(t,"application/xml");
   const texte=n=>[...n.getElementsByTagName("t")].map(x=>x.textContent).join("");
-  const partages=[]; const ss=await lire("xl/sharedStrings.xml");
-  if(ss) [...xml(ss).getElementsByTagName("si")].forEach(si=>partages.push(texte(si)));
+  const partages=[];const ss=await lire("xl/sharedStrings.xml");
+  if(ss)[...xml(ss).getElementsByTagName("si")].forEach(si=>partages.push(texte(si)));
   const feuille=Object.keys(F).filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n))
     .sort((a,b)=>parseInt(a.match(/(\d+)\.xml$/)[1])-parseInt(b.match(/(\d+)\.xml$/)[1]))[0];
   if(!feuille) throw new Error("Aucune feuille trouvée");
@@ -361,295 +455,207 @@ async function lireXlsx(buf){
   [...xml(await lire(feuille)).getElementsByTagName("row")].forEach(row=>{
     const L={};
     [...row.getElementsByTagName("c")].forEach(c=>{
-      const col=(c.getAttribute("r")||"").replace(/\d+/g,""); if(col!=="A" && col!=="B") return;
-      const type=c.getAttribute("t"), v=c.getElementsByTagName("v")[0];
-      L[col] = type==="s" ? (partages[+(v&&v.textContent)]||"") : type==="inlineStr" ? texte(c) : (v?v.textContent:"");
+      const col=(c.getAttribute("r")||"").replace(/\d+/g,"");if(col!=="A"&&col!=="B") return;
+      const ty=c.getAttribute("t"),v=c.getElementsByTagName("v")[0];
+      L[col]=ty==="s"?(partages[+(v&&v.textContent)]||""):ty==="inlineStr"?texte(c):(v?v.textContent:"");
     });
     lignes.push(L);
   });
   return lignes;
 }
 $("#fichierXlsx").addEventListener("change",async e=>{
-  const f=e.target.files[0]; e.target.value=""; if(!f) return;
+  const f=e.target.files[0];e.target.value="";if(!f) return;
   let lignes;
-  try{ lignes=await lireXlsx(await f.arrayBuffer()); }catch(err){ toast(err.message||"Lecture du fichier impossible"); return; }
-  const noms=lignes.map(l=>({nom:String(l.A||"").replace(/\s+/g," ").trim(), t:parseT(l.B)})).filter(l=>l.nom);
-  if(noms.length && /^(nom|noms|élèves?|eleves?|prénom|prenom)\b/i.test(noms[0].nom) && !noms[0].t) noms.shift();
-  if(!noms.length){ toast("Aucun nom trouvé en colonne A"); return; }
-  const cls=(prompt(`${noms.length} élève(s) trouvé(s). Nom de la classe :`, f.name.replace(/\.xlsx$/i,""))||"").trim();
-  if(!cls) return;
-  if(!S.classes[cls]) S.classes[cls]=nouvelleClasse();
-  S.cur=cls;
-  const deja=new Set(C().eleves.map(x=>x.nom.toLowerCase()));
-  let ajout=0;
-  noms.forEach(n=>{ if(deja.has(n.nom.toLowerCase())) return; C().eleves.push({id:uid(), nom:n.nom, t50:n.t, present:true}); deja.add(n.nom.toLowerCase()); ajout++; });
-  selTrio=null; sauver(); rendre();
-  toast(`${ajout} élève(s) importé(s) dans ${cls}`);
+  try{lignes=await lireXlsx(await f.arrayBuffer());}catch(err){toast(err.message||"Lecture du fichier impossible");return;}
+  const noms=lignes.map(l=>({nom:String(l.A||"").replace(/\s+/g," ").trim(),t:parseT(l.B)})).filter(l=>l.nom);
+  if(noms.length&&/^(nom|noms|élèves?|eleves?|prénom|prenom)\b/i.test(noms[0].nom)&&!noms[0].t) noms.shift();
+  if(!noms.length){toast("Aucun nom trouvé en colonne A");return;}
+  const cls=creerClasse(f.name.replace(/\.xlsx$/i,""));if(!cls) return;
+  S.cur=cls;let n=0;noms.forEach(x=>{if(ajouter(x.nom,x.t))n++;});
+  selTrio=null;sauver();rendre();toast(`${n} élève(s) importé(s) dans ${cls}`);
 });
 
-function rendreEleves(){
-  const el = C().eleves.slice().sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"}));
-  $("#titreListe").textContent = `Élèves (${C().eleves.length})`;
-  $("#corpsEleves").innerHTML = el.length ? el.map(e=>{
-    const t=parseT(e.t50);
-    return `<tr class="${e.present===false?"absent":""}" data-id="${e.id}">
-      <td><input type="checkbox" data-act="pres" ${e.present!==false?"checked":""} aria-label="Présent"></td>
-      <td>${esc(e.nom)}</td>
-      <td><input class="t num" type="text" inputmode="decimal" data-act="temps" value="${t?fr(t,2):""}" aria-label="Temps 50 m"></td>
-      <td class="d num">${t?fr(d6(t)):"–"}</td>
-      <td><button class="x" data-act="supp" aria-label="Supprimer ${esc(e.nom)}">×</button></td></tr>`;
-  }).join("") : `<tr><td colspan="5" class="vide">Ajoute les élèves et leur temps sur 50 m.</td></tr>`;
-}
-$("#corpsEleves").addEventListener("change",e=>{
-  const tr=e.target.closest("tr"); if(!tr) return; const el=eleve(tr.dataset.id); if(!el) return;
-  if(e.target.dataset.act==="pres"){ el.present=e.target.checked; }
-  if(e.target.dataset.act==="temps"){
-    if(!e.target.value.trim()) el.t50=null;
-    else { const t=parseT(e.target.value); if(!t) toast("Temps non valide (entre 4 et 20 s)"); else el.t50=t; }
-  }
-  sauver(); rendreEleves();
-});
-$("#corpsEleves").addEventListener("keydown",e=>{
-  if(e.key!=="Enter" || e.target.dataset.act!=="temps") return;
-  e.preventDefault();
-  const suiv=e.target.closest("tr").nextElementSibling, id=suiv && suiv.dataset.id;
-  e.target.blur();
-  if(id){ const i=document.querySelector(`#corpsEleves tr[data-id="${id}"] input.t`); if(i){ i.focus(); i.select(); } }
-});
-$("#corpsEleves").addEventListener("click",e=>{
-  if(e.target.dataset.act!=="supp") return;
-  const id=e.target.closest("tr").dataset.id, el=eleve(id);
-  if(!confirm(`Supprimer ${el.nom} ?`)) return;
-  C().eleves=C().eleves.filter(x=>x.id!==id);
-  C().trios.forEach(t=>t.membres=t.membres.filter(m=>m!==id));
-  C().trios=C().trios.filter(t=>t.membres.length);
-  sauver(); rendreEleves();
-});
-
-/* ---------- Trios hétérogènes ---------- */
+/* ---------- Trios ---------- */
 function constituer(){
-  const pres = C().eleves.filter(e=>e.present!==false && parseT(e.t50))
-    .sort((a,b)=>d6(parseT(b.t50))-d6(parseT(a.t50))).map(e=>e.id);
+  const pres=C().eleves.filter(e=>e.present!==false&&parseT(e.temps)).sort((a,b)=>distRelais(b)-distRelais(a)).map(e=>e.id);
   const n=pres.length;
-  if(n<3){ toast("Il faut au moins 3 élèves présents"); return; }
-  const g=Math.floor(n/3);
-  const grp=Array.from({length:g},()=>[]);
-  // Tête et milieu en serpentin
-  for(let i=0;i<2*g;i++){ const r=Math.floor(i/g), p=i%g; grp[r===0?p:g-1-p].push(pres[i]); }
-  // Dernier tiers : le plus rapide restant va au trio le plus faible
-  const reste=pres.slice(2*g, 3*g);
+  if(n<3){toast("Il faut au moins 3 élèves présents et chronométrés");return;}
+  const g=Math.floor(n/3),grp=Array.from({length:g},()=>[]);
+  for(let i=0;i<2*g;i++){const r=Math.floor(i/g),p=i%g;grp[r===0?p:g-1-p].push(pres[i]);}
+  const reste=pres.slice(2*g,3*g);
   grp.map((m,k)=>({k,s:somme(m)})).sort((a,b)=>a.s-b.s).forEach((o,i)=>grp[o.k].push(reste[i]));
-  // Élèves en plus : groupes de 4, au trio le plus faible
   pres.slice(3*g).forEach(id=>{
-    let best=0; grp.forEach((m,k)=>{ if(m.length<grp[best].length || (m.length===grp[best].length && somme(m)<somme(grp[best]))) best=k; });
-    grp[best].push(id);
+    let b=0;grp.forEach((m,k)=>{if(m.length<grp[b].length||(m.length===grp[b].length&&somme(m)<somme(grp[b])))b=k;});grp[b].push(id);
   });
-  C().trios = grp.map((m,k)=>({id:uid(), num:k+1, membres:m, niveau:100}));
-  selTrio=null; sauver(); rendreTrios();
-  toast(`${g} groupe(s) constitué(s)`);
+  C().trios=grp.map((m,k)=>({id:uid(),num:k+1,membres:m,niveau:100}));
+  selTrio=null;swapSel=null;sauver();rendreTrios();toast(`${g} trio(s) constitué(s)`);
 }
 $("#constituer").addEventListener("click",()=>{
-  if(C().trios.length && !confirm("Refaire les trios ? Les records déjà enregistrés restent dans l'historique.")) return;
+  if(C().trios.length&&!confirm("Refaire les trios ? Les niveaux repartent à 100 %.")) return;
   constituer();
 });
-
 let swapSel=null;
 function rendreTrios(){
-  const pres=C().eleves.filter(e=>e.present!==false && parseT(e.t50)).length;
-  $("#infoPresents").textContent = `${pres} élève(s) présent(s)`;
   const T=C().trios;
-  $("#aideSwap").hidden = !T.length;
-  if(T.length){
-    const s=T.map(t=>somme(t.membres)/t.membres.length*3);
-    $("#equilibre").textContent = `Écart entre le trio le plus fort et le plus faible : ${fr(Math.max(...s)-Math.min(...s))} m sur 18 s`;
-  } else $("#equilibre").textContent="";
-  $("#listeTrios").innerHTML = T.length ? T.map((t,ti)=>`
-    <div class="couloir">
-      <div class="tete"><b>Couloir ${t.num}</b>
-        <div class="cible"><strong class="num">${fr(cibleTrio(t))} m</strong><span>à ${niveau(t)} % en ${dureeTrio(t)} s</span></div></div>
-      ${t.membres.map((id,mi)=>{ const e=eleve(id); if(!e) return "";
-        const sel = swapSel && swapSel[0]===ti && swapSel[1]===mi;
-        return `<button class="membre ${sel?"sel":""}" data-t="${ti}" data-m="${mi}">
-          <span class="ordre num">${mi+1}</span><span class="nom">${esc(e.nom)}</span>
-          <span class="num">${fr(distEleve(id))} m</span></button>`; }).join("")}
-      <div class="niveaux" role="group" aria-label="Intensité">${NIVEAUX.map(n=>`<button class="niv" data-t="${ti}" data-n="${n}" aria-pressed="${niveau(t)===n}">${n} %</button>`).join("")}</div>
-    </div>`).join("") : `<div class="vide">Aucun trio. Saisis les temps puis touche « Constituer les trios ».</div>`;
+  const pres=C().eleves.filter(e=>e.present!==false&&parseT(e.temps)).length;
+  let info=`${pres} élève(s) présent(s) et chronométré(s)`;
+  if(T.length){const s=T.map(t=>somme(t.membres)/t.membres.length*3);info+=`. Écart entre trios : ${fr(Math.max(...s)-Math.min(...s))} m`;}
+  $("#infoTrios").textContent=info;
+  $("#aideTrios").hidden=!T.length;
+  $("#tuilesTrios").innerHTML=T.length?T.map((t,ti)=>`
+    <div class="tt" data-id="${t.id}">
+      <div class="tt-tete"><button class="poignee" aria-label="Déplacer le trio ${t.num}">⠿</button><b>Trio ${t.num}</b><span class="passage">passage ${ti+1}</span></div>
+      ${t.membres.map((id,mi)=>`<button class="membre ${swapSel&&swapSel[0]===t.id&&swapSel[1]===mi?"sel":""}" data-t="${t.id}" data-m="${mi}">
+        <span class="o num">${mi+1}</span><span class="nom">${esc(nomEl(id))}</span><span class="num">${fr(distId(id))} m</span></button>`).join("")}
+      <div class="tt-pied">
+        <div class="cible"><strong class="num">${fr(cibleTrio(t))} m</strong><span>cible en ${dureeTrio(t)} s</span></div>
+        <div class="niv" role="group" aria-label="Niveau"><button data-niv="-1" data-t="${t.id}" aria-label="Baisser le niveau">−</button><span class="num">${niveau(t)} %</span><button data-niv="1" data-t="${t.id}" aria-label="Monter le niveau">+</button></div>
+      </div>
+    </div>`).join(""):`<div class="vide" style="grid-column:1/-1">Chronomètre les élèves puis touche « Constituer les trios ».</div>`;
 }
-$("#listeTrios").addEventListener("click",e=>{
-  const nv=e.target.closest(".niv");
-  if(nv){ C().trios[+nv.dataset.t].niveau=+nv.dataset.n; sauver(); rendreTrios(); return; }
-  const b=e.target.closest(".membre"); if(!b) return;
-  const p=[+b.dataset.t,+b.dataset.m];
-  if(!swapSel){ swapSel=p; }
-  else if(swapSel[0]===p[0] && swapSel[1]===p[1]){ swapSel=null; }
+$("#tuilesTrios").addEventListener("click",e=>{
+  const nv=e.target.closest("[data-niv]");
+  if(nv){
+    const t=C().trios.find(x=>x.id===nv.dataset.t),i=NIVEAUX.indexOf(niveau(t))+ +nv.dataset.niv;
+    if(i>=0&&i<NIVEAUX.length){t.niveau=NIVEAUX[i];sauver();rendreTrios();}
+    return;
+  }
+  const b=e.target.closest(".membre");if(!b) return;
+  const p=[b.dataset.t,+b.dataset.m];
+  if(!swapSel) swapSel=p;
+  else if(swapSel[0]===p[0]&&swapSel[1]===p[1]) swapSel=null;
   else{
-    const T=C().trios, a=T[swapSel[0]].membres, z=T[p[0]].membres;
-    [a[swapSel[1]], z[p[1]]] = [z[p[1]], a[swapSel[1]]];
-    swapSel=null; sauver();
+    const a=C().trios.find(x=>x.id===swapSel[0]).membres,z=C().trios.find(x=>x.id===p[0]).membres;
+    [a[swapSel[1]],z[p[1]]]=[z[p[1]],a[swapSel[1]]];swapSel=null;sauver();
   }
   rendreTrios();
 });
-
-/* ---------- Chrono ---------- */
-let enCours=null, selTrio=null, audio=null, noeuds=[], etat="attente", t0=0, raf=0, wake=null;
-const trioSel = () => C().trios.find(t=>t.id===selTrio);
-
-function bip(t,freq,dur){
-  const o=audio.createOscillator(), g=audio.createGain();
-  o.type="square"; o.frequency.value=freq;
-  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.35,t+0.01);
-  g.gain.setValueAtTime(0.35,t+dur-0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-  o.connect(g).connect(audio.destination); o.start(t); o.stop(t+dur+0.02); noeuds.push(o);
+/* Glisser-déposer des tuiles (souris et tactile) */
+let drag=null;
+$("#tuilesTrios").addEventListener("pointerdown",e=>{
+  const h=e.target.closest(".poignee");if(!h) return;
+  e.preventDefault();drag=h.closest(".tt");drag.classList.add("drag");
+});
+window.addEventListener("pointermove",e=>{
+  if(!drag) return;e.preventDefault();
+  const sous=document.elementFromPoint(e.clientX,e.clientY),cible=sous&&sous.closest(".tt");
+  if(!cible||cible===drag||cible.parentNode!==drag.parentNode) return;
+  const items=[...drag.parentNode.children],i=items.indexOf(drag),j=items.indexOf(cible);
+  drag.parentNode.insertBefore(drag,i<j?cible.nextSibling:cible);
+},{passive:false});
+function finDrag(){
+  if(!drag) return;drag.classList.remove("drag");
+  const ordre=[...$("#tuilesTrios").children].map(x=>x.dataset.id),T=C().trios;
+  C().trios=ordre.map(id=>T.find(t=>t.id===id)).filter(Boolean);drag=null;sauver();rendreTrios();
 }
-function rendreChoix(){
+window.addEventListener("pointerup",finDrag);window.addEventListener("pointercancel",finDrag);
+
+/* ---------- Relais ---------- */
+let selTrio=null,etat="attente",t0=0,raf=0,wake=null,enCours=null;
+const trioSel=()=>C().trios.find(t=>t.id===selTrio);
+function rendreRelais(){
   const T=C().trios;
-  if(selTrio && !trioSel()) selTrio=null;
-  $("#choixTrio").innerHTML = T.length ? T.map(t=>`<button class="chip" aria-pressed="${t.id===selTrio}" data-id="${t.id}">Couloir ${t.num}</button>`).join("")
-    : `<p class="aide">Constitue d'abord les trios.</p>`;
+  if(!trioSel()) selTrio=T.length?T[0].id:null;
+  $("#file").innerHTML=T.map((t,i)=>`<button class="chip" data-id="${t.id}" aria-pressed="${t.id===selTrio}">${i+1}. Trio ${t.num}<small>${niveau(t)} %</small></button>`).join("");
   const tr=trioSel();
-  $("#partez").disabled = !tr || etat!=="attente";
-  $("#stop").disabled = etat==="attente";
-  if(etat==="attente"){
-    $("#affStatut").textContent = tr ? `Cible : ${fr(cibleTrio(tr))} m en ${dureeTrio(tr)} s` : "Choisis un trio";
+  $("#partez").disabled=!tr||etat!=="attente"||!$("#resultats").hidden;
+  $("#stop").disabled=etat==="attente";
+  $("#infoCible").innerHTML=tr?`<b>Trio ${tr.num} · niveau ${niveau(tr)} %</b><span>Cible <strong class="num">${fr(cibleTrio(tr))} m</strong> en ${dureeTrio(tr)} s</span>`:"";
+  if(etat==="attente"&&$("#resultats").hidden){
+    $("#affStatut").textContent=tr?tr.membres.map((id,i)=>`${i+1}. ${nomEl(id)}`).join("   "):"Constitue d'abord les trios";
     dessinerPiste(0);
   }
-  rendreNivChrono();
 }
-function rendreNivChrono(){
+function dessinerPiste(ec){
   const tr=trioSel();
-  $("#nivChrono").hidden=!tr;
-  $("#nivChrono").innerHTML = tr ? NIVEAUX.map(n=>`<button data-n="${n}" aria-pressed="${niveau(tr)===n}" ${etat!=="attente"?"disabled":""}>${n} %</button>`).join("") : "";
-}
-$("#nivChrono").addEventListener("click",e=>{
-  const b=e.target.closest("button"), tr=trioSel();
-  if(!b || !tr || etat!=="attente") return;
-  tr.niveau=+b.dataset.n; sauver(); $("#suite").innerHTML=""; rendreChoix();
-});
-function dessinerPiste(ecoule){
-  const tr=trioSel();
-  if(!tr){ $("#piste").innerHTML=`<div class="seg"><span></span></div>`; $("#reperes").innerHTML=""; return; }
-  const n=tr.membres.length;
-  if($("#piste").children.length!==n || $("#piste").dataset.id!==tr.id+tr.membres.join()){
-    $("#piste").dataset.id=tr.id+tr.membres.join();
-    $("#piste").innerHTML = tr.membres.map(id=>`<div class="seg"><div class="rempli"></div><span>${esc((eleve(id)||{}).nom||"")}</span></div>`).join("");
-    $("#reperes").innerHTML = Array.from({length:n+1},(_,i)=>`<span>${i*6} s</span>`).join("");
+  if(!tr){$("#piste").innerHTML=`<div class="seg"></div>`;$("#reperes").innerHTML="";return;}
+  const sig=tr.id+tr.membres.join()+R().duree;
+  if($("#piste").dataset.sig!==sig){
+    $("#piste").dataset.sig=sig;
+    $("#piste").innerHTML=tr.membres.map(id=>`<div class="seg"><div class="rempli"></div><span>${esc(nomEl(id))}</span></div>`).join("");
+    $("#reperes").innerHTML=Array.from({length:tr.membres.length+1},(_,i)=>`<span>${i*R().duree} s</span>`).join("");
   }
-  [...$("#piste").children].forEach((s,i)=>{
-    const p=Math.min(1,Math.max(0,(ecoule-6*i)/6));
-    s.firstElementChild.style.width=(p*100)+"%";
-  });
+  const d=R().duree;
+  [...$("#piste").children].forEach((s,i)=>{s.firstElementChild.style.width=Math.min(1,Math.max(0,(ec-d*i)/d))*100+"%";});
 }
-$("#choixTrio").addEventListener("click",e=>{
-  const b=e.target.closest(".chip"); if(!b || etat!=="attente") return;
-  selTrio=b.dataset.id; $("#saisie").hidden=true; $("#affTemps").textContent="0,0"; rendreChoix();
+$("#file").addEventListener("click",e=>{
+  const b=e.target.closest(".chip");if(!b||etat!=="attente") return;
+  if(!$("#resultats").hidden&&!confirm("Le résultat du trio précédent n'est pas saisi. Changer quand même ?")) return;
+  selTrio=b.dataset.id;$("#resultats").hidden=true;enCours=null;$("#verdict").textContent="";$("#affTemps").textContent="0,0";rendreRelais();
 });
 $("#partez").addEventListener("click",async()=>{
-  const tr=trioSel(); if(!tr) return;
-  try{ audio = audio || new (window.AudioContext||window.webkitAudioContext)(); await audio.resume(); }catch(e){}
-  try{ wake = await navigator.wakeLock.request("screen"); }catch(e){}
-  enCours={cible:cibleTrio(tr), base:baseTrio(tr), niv:niveau(tr)}; $("#suite").innerHTML="";
-  const n=tr.membres.length, now=audio?audio.currentTime:0;
-  t0 = now+3; noeuds=[];
-  if(audio){
-    bip(now,660,0.15); bip(now+1,660,0.15); bip(now+2,660,0.15); bip(t0,1100,0.3);
-    for(let i=1;i<n;i++) bip(t0+6*i,1100,0.25);
-    bip(t0+6*n,880,0.9);
-  }
-  etat="compte"; $("#saisie").hidden=true; rendreChoix();
-  const debutPerf=performance.now();
-  const horloge = () => audio ? audio.currentTime : now + (performance.now()-debutPerf)/1000;
+  const tr=trioSel();if(!tr) return;
+  await audioPret();
+  try{wake=await navigator.wakeLock.request("screen");}catch(e){}
+  const n=tr.membres.length,d=R().duree,now=audio?audio.currentTime:0;
+  enCours={cible:cibleTrio(tr),niv:niveau(tr)};
+  t0=now+3;noeuds=[];
+  bip(now,660,.15);bip(now+1,660,.15);bip(now+2,660,.15);bip(t0,1100,.3);
+  for(let i=1;i<n;i++) bip(t0+d*i,1100,.25);
+  bip(t0+d*n,880,.9);
+  etat="course";$("#resultats").hidden=true;$("#verdict").textContent="";rendreRelais();
+  const p0=performance.now(),horloge=()=>audio?audio.currentTime:now+(performance.now()-p0)/1000;
   const boucle=()=>{
-    const t=horloge()-t0, total=6*n;
-    if(t<0){ $("#affTemps").textContent=Math.ceil(-t); $("#affStatut").textContent="À vos marques…"; }
-    else if(t<total){
-      etat="course"; const leg=Math.floor(t/6);
-      $("#affTemps").textContent=fr(t); $("#affStatut").textContent=`${leg+1}. ${(eleve(tr.membres[leg])||{}).nom||""}`;
-      dessinerPiste(t);
-    } else { finir(true); return; }
+    const t=horloge()-t0,total=d*n;
+    if(t<0){$("#affTemps").textContent=Math.ceil(-t);$("#affStatut").textContent="À vos marques…";}
+    else if(t<total){const k=Math.floor(t/d);$("#affTemps").textContent=fr(t);$("#affStatut").textContent=`${k+1}. ${nomEl(tr.membres[k])}`;dessinerPiste(t);}
+    else{finir(true);return;}
     raf=requestAnimationFrame(boucle);
   };
   raf=requestAnimationFrame(boucle);
 });
 function finir(complet){
   cancelAnimationFrame(raf);
-  if(!complet) noeuds.forEach(o=>{ try{o.stop();}catch(e){} });
-  noeuds=[]; etat="attente";
-  try{ wake && wake.release(); }catch(e){} wake=null;
+  if(!complet) noeuds.forEach(o=>{try{o.stop();}catch(e){}});
+  noeuds=[];etat="attente";try{wake&&wake.release();}catch(e){}wake=null;
   const tr=trioSel();
-  if(complet && tr){
-    $("#affTemps").textContent=fr(dureeTrio(tr)); dessinerPiste(99);
-    $("#affStatut").textContent="Terminé : mesure la distance";
-    $("#saisie").hidden=false; $("#verdict").textContent=""; $("#distReal").value="";
-    $("#distReal").placeholder=fr(cibleTrio(tr)); setTimeout(()=>$("#distReal").focus(),50);
-    $("#partez").disabled=false; $("#stop").disabled=true; rendreNivChrono();
-  } else { $("#affTemps").textContent="0,0"; rendreChoix(); }
+  if(complet&&tr){
+    $("#affTemps").textContent=fr(dureeTrio(tr));dessinerPiste(999);
+    $("#affStatut").textContent="Terminé : où est arrivé le dernier relayeur ?";
+    $("#resultats").hidden=false;
+  }else{enCours=null;$("#affTemps").textContent="0,0";}
+  rendreRelais();
 }
 $("#stop").addEventListener("click",()=>finir(false));
-$("#enregistrer").addEventListener("click",()=>{
-  const tr=trioSel(), d=parseFloat(String($("#distReal").value).replace(",","."));
-  if(!tr || !enCours){ toast("Lance d'abord une course"); return; }
-  if(!(d>0)){ toast("Indique la distance atteinte"); return; }
-  const {cible,base,niv}=enCours;
-  const avant=meilleur(tr.id);
-  C().essais.push({trioId:tr.id, num:tr.num, noms:tr.membres.map(id=>(eleve(id)||{}).nom||""), cible, base, niveau:niv, dist:d, date:Date.now()});
-  enCours=null; sauver();
-  const ec=d-cible, v=$("#verdict");
-  const record = !avant || d/base > ratio(avant);
-  v.className="verdict "+(ec>=0?"ok":"ko");
-  v.textContent = (ec>=0 ? `Cible à ${niv} % battue de ${fr(ec)} m` : `À ${fr(-ec)} m de la cible à ${niv} %`) + (record?" · nouveau record du trio":"");
-  const suiv=NIVEAUX.find(n=>n>niv);
-  $("#suite").innerHTML = ec<0 ? "" : suiv
-    ? `<button class="btn vert" id="monter" data-n="${suiv}">Passer à ${suiv} %</button>`
-    : `<span class="valide">Niveau maximal réussi</span>`;
-  $("#distReal").value="";
+$("#resultats").addEventListener("click",e=>{
+  const b=e.target.closest("[data-r]"),tr=trioSel();if(!b||!tr||!enCours) return;
+  const r=b.dataset.r;
+  C().essais.push({trioId:tr.id,num:tr.num,niveau:enCours.niv,cible:enCours.cible,resultat:r,date:Date.now()});
+  let msg=r==="non"?"Cible non atteinte":r==="atteinte"?"Cible atteinte":"Cible dépassée";
+  if(r!=="non"){const s=NIVEAUX.find(n=>n>enCours.niv);if(s){tr.niveau=Math.max(niveau(tr),s);msg+=` : le trio ${tr.num} passe à ${s} %`;}else msg+=" : niveau maximal réussi !";}
+  else msg+=` : le trio ${tr.num} reste à ${niveau(tr)} %`;
+  enCours=null;
+  const T=C().trios,i=T.findIndex(t=>t.id===tr.id),nx=T[(i+1)%T.length];
+  selTrio=nx.id;sauver();
+  $("#resultats").hidden=true;$("#affTemps").textContent="0,0";
+  $("#verdict").className="verdict "+(r==="non"?"ko":"ok");
+  $("#verdict").textContent=msg+`. Au tour du trio ${nx.num}.`;
+  rendreRelais();
 });
-$("#suite").addEventListener("click",e=>{
-  const b=e.target.closest("#monter"), tr=trioSel(); if(!b || !tr) return;
-  tr.niveau=+b.dataset.n; sauver(); $("#suite").innerHTML=""; rendreChoix();
-  toast(`Couloir ${tr.num} : cible à ${tr.niveau} %`);
-});
-$("#distReal").addEventListener("keydown",e=>{ if(e.key==="Enter") $("#enregistrer").click(); });
 
-/* ---------- Records ---------- */
-const ratio = e => e.dist/(e.base||e.cible);
-function meilleur(trioId){
-  return C().essais.filter(e=>e.trioId===trioId).sort((a,b)=>ratio(b)-ratio(a))[0]||null;
-}
-function niveauReussi(trioId){
-  const ok=C().essais.filter(e=>e.trioId===trioId && e.dist>=e.cible).map(e=>e.niveau||100);
-  return ok.length ? Math.max(...ok) : null;
-}
-function rendreRecords(){
+/* ---------- Bilan ---------- */
+function rendreBilan(){
   const T=C().trios;
-  const lignes=T.map(t=>({t, m:meilleur(t.id), n:C().essais.filter(e=>e.trioId===t.id).length}))
-    .sort((a,b)=>(b.m?ratio(b.m):-1)-(a.m?ratio(a.m):-1));
-  if(!lignes.some(l=>l.m)){ $("#listeRecords").innerHTML=`<div class="vide">Aucun essai enregistré. Lance le chrono pour un trio.</div>`; return; }
-  const max=Math.max(1.15,...lignes.filter(l=>l.m).map(l=>ratio(l.m)));
-  $("#listeRecords").innerHTML=lignes.map((l,i)=>{
-    const noms=l.t.membres.map(id=>(eleve(id)||{}).nom||"").join(", ");
-    if(!l.m) return `<div class="rec"><span class="rang">–</span><div><b>Couloir ${l.t.num}</b><div class="detail">${esc(noms)}</div></div><span class="detail">pas d'essai</span></div>`;
-    const p=ratio(l.m), nr=niveauReussi(l.t.id);
-    return `<div class="rec ${i===0?"premier":""}">
-      <span class="rang num">${i+1}</span>
-      <div><b>Couloir ${l.t.num}</b><div class="detail">${esc(noms)}</div>
-        <div class="detail num">Record ${fr(l.m.dist)} m pour ${fr(l.m.base||l.m.cible)} m théoriques, ${l.n} essai(s)</div>
-        <div class="valide ${nr?"":"non"}">${nr?`Niveau réussi : ${nr} %`:"Aucun niveau réussi"} · en cours : ${niveau(l.t)} %</div></div>
-      <span class="pct num">${Math.round(p*100)} %</span>
-      <div class="barre"><i style="width:${Math.min(100,p/max*100)}%"></i><b style="left:${100/max}%"></b></div></div>`;
+  if(!T.length){$("#listeBilan").innerHTML=`<div class="vide">Aucun trio pour cette classe.</div>`;return;}
+  const coul={non:"var(--alerte)",atteinte:"var(--pelouse)",depassee:"var(--pelouse-vif)"};
+  const lib={non:"✗",atteinte:"✓",depassee:"✓+"};
+  $("#listeBilan").innerHTML=T.slice().sort((a,b)=>niveau(b)-niveau(a)).map(t=>{
+    const es=C().essais.filter(e=>e.trioId===t.id);
+    return `<div class="ligne-bilan"><div><b>Trio ${t.num}</b><div class="noms">${t.membres.map(id=>esc(nomEl(id))).join(", ")}</div></div>
+      <div class="nv num">${niveau(t)} %</div>
+      <div class="histo">${es.length?es.map(e=>`<span style="background:${coul[e.resultat]}">${e.niveau} % ${lib[e.resultat]}</span>`).join(""):`<span style="background:var(--doux)">aucun passage</span>`}</div></div>`;
   }).join("");
 }
 $("#effacerEssais").addEventListener("click",()=>{
   if(!C().essais.length) return;
-  if(!confirm("Effacer tous les essais de cette classe ?")) return;
-  C().essais=[]; sauver(); rendreRecords();
+  if(!confirm("Effacer l'historique des passages de cette classe ? Les niveaux actuels sont conservés.")) return;
+  C().essais=[];sauver();rendreBilan();
 });
 
 /* ---------- Rendu ---------- */
-function rendre(){ rendreClasses(); rendreEleves(); rendreTrios(); rendreChoix(); rendreRecords(); }
+function rendre(){rendreClasses();rendreReglages();rendreEleves();rendreTrios();rendreRelais();rendreBilan();}
 rendre();
-
-/* PWA : hors-ligne une fois hébergée (GitHub Pages…) */
-if("serviceWorker" in navigator){ try{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }catch(e){} }
+if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(()=>{});}catch(e){}}
 })();
 </script>
 </body>
